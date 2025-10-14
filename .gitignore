@@ -1,0 +1,79 @@
+# ----------------------------------------------------------------------
+# 1. Arquivos de Compilação e Gerados pelo Python
+# ----------------------------------------------------------------------
+# Diretórios de compilação e caches
+__pycache__/
+build/
+dist/
+wheels/
+*.egg-info/
+*.whl
+
+# Arquivos compilados do Python
+*.pyc
+*.pyo
+
+# Arquivos de log de teste (como os gerados por 'coverage')
+.coverage
+.tox/
+
+# Arquivos de depuração e perfis
+*.pstats
+.ipynb_checkpoints/
+
+---
+# ----------------------------------------------------------------------
+# 2. Ambientes Virtuais e Arquivos de Configuração Local
+# ----------------------------------------------------------------------
+# Ambientes virtuais (os nomes mais comuns)
+.venv/
+.env/
+env/
+venv/
+/bin/
+
+# Variáveis de ambiente e segredos locais (muito importante!)
+.env
+.flaskenv
+.vscode/.env
+local_settings.py
+
+# Arquivos de configuração de IDEs (muito comuns)
+.idea/             # JetBrains (PyCharm, IntelliJ, etc.)
+*.swp
+*.bak
+*.swo
+
+# ----------------------------------------------------------------------
+# 3. Dados, Logs e Checkpoints
+# ----------------------------------------------------------------------
+# Diretórios de dados brutos e processados
+data/
+
+# Modelos treinados e checkpoints (para evitar subir arquivos grandes)
+models/
+checkpoints/
+
+# Arquivos de log gerados pela aplicação
+*.log
+log.txt
+/logs/
+
+# Arquivos do Jupyter Notebook temporários
+.ipynb_checkpoints/
+
+# ----------------------------------------------------------------------
+# 4. Outros Arquivos Comuns e Temporários
+# ----------------------------------------------------------------------
+# Arquivos de empacotamento
+pip-log.txt
+
+# Linters
+.ruff_cache
+
+# Binarios
+bin/
+
+# Arquivos do sistema operacional
+.DS_Store          # macOS
+Thumbs.db          # Windows

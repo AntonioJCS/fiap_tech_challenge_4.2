@@ -1,0 +1,138 @@
+[build-system]
+requires = ["hatchling>=1.25.0"]
+build-backend = "hatchling.build"
+
+[project]
+# Metadados principais (PEP 621)
+name = "fiap_tech_challenge_4_rec"
+version = "0.1.0"
+description = "Playground Streamlit: Transcrição (WhisperX) + Fichamento Markdown + Quiz (Hugging Face Transformers) com opção de fine-tuning."
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+license = { text = "MIT" }
+authors = [{ name = "AntonioJCS", email = "antonioxp.8@hotmail.com" }]
+keywords = ["machine-learning"]
+
+#  Dependências principais (instaladas sempre)
+dependencies = [
+    # App
+    "streamlit>=1.38,<2",
+    "python-dotenv>=1.0.1,<2",
+    "python-ffmpeg==2.0.12",
+    "yt-dlp>=2025.1,<2026",
+    "rich>=13.7,<14",
+    "loguru>=0.7,<0.8",
+    "pydub>=0.25,<0.26",
+
+    # NLP / Audio
+    "torch>=2.7 ; extra != 'cuda'",
+    "torchaudio>=2.7 ; extra != 'cuda'",
+    "torchvision>=0.22.0 ; extra != 'cuda'",
+    "av<=14.0.0",
+    "whisperx>=3.3,<4",
+    "librosa>=0.10,<0.11",
+    "soundfile>=0.12,<0.13",
+
+    # Transformers
+    "transformers>=4.44,<4.58",
+    "datasets>=3.0,<4",
+    "accelerate>=1.0,<2",
+    "sentencepiece>=0.2,<0.3",
+    "optuna>=3.6,<4",
+
+    # Utils
+    "scikit-learn>=1.5,<1.8",
+    "pandas>=2.2,<2.4",
+    "numpy>=2, <3",
+    "tqdm>=4.66,<5",
+    "gputil>=1.4,<2",
+]
+
+# Dependências opcionais (extras) / Perfis de trabalho
+[project.optional-dependencies]
+cuda = ["torch>=2.7.0", "torchvision>=0.22.0", "torchaudio>=2.7.0", "gputil==1.4.0"]
+cpu = ["torch>=2.7.0", "torchvision>=0.22.0", "torchaudio>=2.7.0"]
+
+# URLs do projeto
+[project.urls]
+Homepage = "https://github.com/antonio/exemplo-projeto"
+Repository = "https://github.com/antonio/exemplo-projeto"
+Issues = "https://github.com/antonio/exemplo-projeto/issues"
+
+# Entrypoints CLI (PEP 621)
+[project.scripts]
+app-cli = "exemplo_projeto.cli:main"
+check_device = "ftc4.tools.check_torch_device:main"
+
+[tool.hatch.build.targets.wheel]
+# pacotes editaveis sob src/
+packages = [
+  "src/ftc4"
+]
+
+# Dependências de desenvolvimento
+[dependency-groups]
+docs = [
+    "mkdocs",
+    "mkdocs-material",
+    "mkdocs-mermaid2-plugin",      # diagramas
+    "mkdocstrings[python]",        # documentação automática de código
+    "mkdocs-awesome-pages-plugin", # estrutura hierárquica nos docs
+]
+
+lint = [
+    "ruff",
+    "black",
+    "isort",
+    "mypy",       # type checking estático
+    "bandit",     # segurança e análise de vulnerabilidade
+    "pre-commit",
+]
+
+tests = [
+    "pytest",
+    "pytest-cov",
+    "pytest-mock",
+    "coverage",
+    "hypothesis",  # testes baseados em propriedades
+]
+
+dev = [
+    "ipython",
+    "jupyterlab",
+    "notebook",
+    "rich",           # logging e visualização bonita no terminal
+    "tqdm",           # barras de progresso
+    "debugpy",        # debugging com VSCode
+    "types-requests", # tipagem estática opcional
+]
+
+[tool.uv]
+# Conflitos entre extras (para evitar combinações inválidas)
+conflicts = [[{ extra = "cuda" }, { extra = "cpu" }]]
+
+# Fontes e índices customizados (PyTorch CPU / CUDA)
+[tool.uv.sources]
+torch = [
+    { index = "pytorch-cpu", extra = "cpu" },
+    { index = "pytorch-cu128", extra = "cuda" },
+]
+torchvision = [
+    { index = "pytorch-cpu", extra = "cpu" },
+    { index = "pytorch-cu128", extra = "cuda" },
+]
+torchaudio = [
+    { index = "pytorch-cpu", extra = "cpu" },
+    { index = "pytorch-cu128", extra = "cuda" },
+]
+
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
