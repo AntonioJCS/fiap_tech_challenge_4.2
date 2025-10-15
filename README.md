@@ -4,9 +4,11 @@ precisamos instalar os binarios o ffmpeg e INCLUIR ELE no .ENV
 poetry >= 2.*
 
 
+install `uv sync --group tests --extra cuda`
+
 Testes unitarios `uv run pytest -v`
 Verificar o hardware atual e os presets indicados `uv run python -m ftc4.core.device`
-executar a app `uv run streamlit run src/app/streamlit_app.py`
+executar a app `uv run streamlit run src/ftc4/app/streamlit_app.py`
 
 
 Explicar configurações do WhisperX

@@ -2,37 +2,10 @@ from dataclasses import dataclass
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+from ftc4.utils.validators import safe_int, safe_float
+
 
 load_dotenv(override=True)
-
-
-# --- Função de Fail Fast ---
-_EMPTY = {"", " ", "none", "null", "nil", "None", "Null", "Nil"}
-
-def _getenv_str(key: str, default: str) -> str:
-    v = os.getenv(key)
-    if v is None or v in _EMPTY:
-        return default
-    return v
-
-def _getenv_int(key: str, default: int) -> int:
-    v = os.getenv(key)
-    if v is None or v.strip() in _EMPTY:
-        return default
-    try:
-        return int(v)
-    except Exception:
-        return default
-
-def _getenv_float(key: str, default: float) -> float:
-    v = os.getenv(key)
-    if v is None or v.strip() in _EMPTY:
-        return default
-    try:
-        return float(v)
-    except Exception:
-        return default
-
 
 # --- Função de Fail Fast ---
 def _get_required_env(var_name: str) -> str:
@@ -67,10 +40,10 @@ class Settings:
     models_dir: Path = Path(os.getenv("MODELS_DIR", base_dir / "models")).resolve()
 
     # Transformers
-    hf_model_name: str = os.getenv("HF_MODEL_NAME", "google/byt5-small")
-    gen_max_new_tokens: int = int(os.getenv("GEN_MAX_NEW_TOKENS", 512))
-    gen_temperature: float = float(os.getenv("GEN_TEMPERATURE", 0.8))   
-    gen_top_p: float = float(os.getenv("GEN_TOP_P", 0.95))
+    hf_model_name: str = os.getenv("HF_MODEL_NAME", "")
+    gen_max_new_tokens: int = safe_int(os.getenv("GEN_MAX_NEW_TOKENS"))
+    gen_temperature: float = safe_float(os.getenv("GEN_TEMPERATURE"))   
+    gen_top_p: float = safe_float(os.getenv("GEN_TOP_P"))
     hf_token: str | None = os.getenv("HUGGINGFACE_TOKEN")
 
     # WhisperX
@@ -85,8 +58,6 @@ class Settings:
     ffmpeg_bin: Path = Path(_get_required_env("FFMPEG_BIN")).resolve()
     ffmpeg_exe: Path = Path(_get_required_env("FFMPEG_EXE")).resolve()
 
-    # PATH
-    path : str = os.getenv("PATH")
 
 settings = Settings()
 

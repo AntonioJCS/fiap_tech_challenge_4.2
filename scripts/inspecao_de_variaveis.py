@@ -18,8 +18,6 @@ def main():
     for i in os.getenv("PATH").split(os.pathsep):
         print(i)
 
-    settings_dict.pop("path")
-
     # Printa o dicionário formatado
     print('\n')
     print("-" * 25, "   PROJECT   ", "-"*25)

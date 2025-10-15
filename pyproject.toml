@@ -50,7 +50,7 @@ dependencies = [
 
 # Dependências opcionais (extras) / Perfis de trabalho
 [project.optional-dependencies]
-cuda = ["torch>=2.7.0", "torchvision>=0.22.0", "torchaudio>=2.7.0", "gputil==1.4.0"]
+cuda = ["torch>=2.7.0", "torchvision>=0.22.0", "torchaudio>=2.7.0", "gputil==1.4.0", "bitsandbytes>=0.43,<0.44"]
 cpu = ["torch>=2.7.0", "torchvision>=0.22.0", "torchaudio>=2.7.0"]
 
 # URLs do projeto
