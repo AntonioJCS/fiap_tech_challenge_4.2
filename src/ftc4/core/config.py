@@ -7,7 +7,35 @@ load_dotenv(override=True)
 
 
 # --- Função de Fail Fast ---
-def get_required_env(var_name: str) -> str:
+_EMPTY = {"", " ", "none", "null", "nil", "None", "Null", "Nil"}
+
+def _getenv_str(key: str, default: str) -> str:
+    v = os.getenv(key)
+    if v is None or v in _EMPTY:
+        return default
+    return v
+
+def _getenv_int(key: str, default: int) -> int:
+    v = os.getenv(key)
+    if v is None or v.strip() in _EMPTY:
+        return default
+    try:
+        return int(v)
+    except Exception:
+        return default
+
+def _getenv_float(key: str, default: float) -> float:
+    v = os.getenv(key)
+    if v is None or v.strip() in _EMPTY:
+        return default
+    try:
+        return float(v)
+    except Exception:
+        return default
+
+
+# --- Função de Fail Fast ---
+def _get_required_env(var_name: str) -> str:
     """
     Tenta obter uma variável de ambiente. Se não for encontrada, levanta um erro.
     Implementa o princípio 'Fail Fast'.
@@ -46,15 +74,16 @@ class Settings:
     hf_token: str | None = os.getenv("HUGGINGFACE_TOKEN")
 
     # WhisperX
-    whisper_device: str = os.getenv("WHISPER_DEVICE", "cpu")
-    whisper_batch_size: int = int(os.getenv("WHISPER_BATCH_SIZE", 16))
+    # A ausencia da variavel ("" ou 0) habilita a seleção automatica no backend (core/device.py)
+    whisper_device: str = os.getenv("WHISPER_DEVICE", "")
+    whisper_batch_size: int = int(os.getenv("WHISPER_BATCH_SIZE", 0))
     whisper_lang: str = os.getenv("WHISPER_LANG", "pt")
-    whisper_model_arch: str = os.getenv("WHISPER_MODEL_ARCH", "")  # "" => auto
-    whisper_compute_type: str = os.getenv("WHISPER_COMPUTE_TYPE", "")  # "" => auto
+    whisper_model_arch: str = os.getenv("WHISPER_MODEL_ARCH", "")
+    whisper_compute_type: str = os.getenv("WHISPER_COMPUTE_TYPE", "")
 
     # FFMPEG
-    ffmpeg_bin: Path = Path(get_required_env("FFMPEG_BIN")).resolve()
-    ffmpeg_exe: Path = Path(get_required_env("FFMPEG_EXE")).resolve()
+    ffmpeg_bin: Path = Path(_get_required_env("FFMPEG_BIN")).resolve()
+    ffmpeg_exe: Path = Path(_get_required_env("FFMPEG_EXE")).resolve()
 
     # PATH
     path : str = os.getenv("PATH")

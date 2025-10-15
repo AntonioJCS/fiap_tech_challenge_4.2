@@ -4,6 +4,29 @@ precisamos instalar os binarios o ffmpeg e INCLUIR ELE no .ENV
 poetry >= 2.*
 
 
+Testes unitarios `uv run pytest -v`
+Verificar o hardware atual e os presets indicados `uv run python -m ftc4.core.device`
+executar a app `uv run streamlit run src/app/streamlit_app.py`
+
+
+Explicar configurações do WhisperX
+- Prefira comentar a linha em vez de deixá-la vazia, ou sempre coloque um valor numérico válido:
+```bash
+# WhisperX overrides (opcionais; deixe vazio para auto)
+# WHISPER_MODEL_ARCH=       # tiny | base | small | medium | large | large-v1 | large-v2
+# WHISPER_COMPUTE_TYPE=     # int8 | float 16 | float32
+# WHISPER_DEVICE=           # cpu | mps | cuda
+# WHISPER_BATCH_SIZE=       # 64 | 32 | 16 | 8 | 4
+WHISPER_LANG=pt
+```
+Explicar seleção automatica de configurações com base no hardware identificado.
+    - 20GB+  : large-v2, batch 32, float16
+    - 12-19GB: large-v2, batch 16, float16
+    - 8-11GB : medium,   batch 12, float16
+    - 6-7GB  : small,    batch 10, float16
+    - <6GB   : small,    batch 8,  int8  (salva VRAM)
+    Se VRAM crítica (>=90%), reduzimos batch e/or trocamos compute_type para int8.
+
 
 # 🎧→📝 MLET Playground: Transcrever, Fichar e Avaliar (Streamlit + Transformers)
 

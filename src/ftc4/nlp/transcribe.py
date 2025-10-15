@@ -30,13 +30,11 @@ def transcribe_wav(path_wav: Path) -> Dict:
     )
 
     # 3) Carrega o modelo WhisperX
-    # Obs.: whisperx aceita 'compute_type' quando usa backend faster-whisper.
-    # Caso seu build não suporte, remova o argumento compute_type.
     model = whisperx.load_model(
         model_arch,
         device=device,
         language=settings.whisper_lang,
-        compute_type=compute_type,  # remova se seu ambiente não suportar
+        compute_type=compute_type,
     )
 
     audio = whisperx.load_audio(str(path_wav))

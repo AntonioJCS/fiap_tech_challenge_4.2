@@ -169,17 +169,32 @@ def _pick_cpu_presets():
 class WhisperRuntimeConfig:
     device: str  # "cuda" | "mps" | "cpu"
     model_arch: str  # "tiny"|"base"|"small"|"medium"|"large-v1"|"large-v2"
-    batch_size: int
+    batch_size: int  # 64 | 32 | 16 | 8 | 4
     compute_type: str  # "float16"|"int8"|"float32" etc.
 
 
-def suggest_whisper_runtime(preferred_index: int = 0) -> WhisperRuntimeConfig:
+def suggest_whisper_runtime(
+    preferred_index: int = 0, force_device: str | None = None
+) -> WhisperRuntimeConfig:
     """
-    Retorna uma configuração sugerida de runtime para Whisper/WhisperX,
-    baseada no dispositivo disponível.
+    
     """
+
+    # detecta HW
     info = detect_device(preferred_index)
 
+    # se houver override, substitui device e recalcula presets
+    if force_device in {"cpu", "cuda", "mps"}:
+        if force_device == "cuda":
+            # usa heurística de GPU (mas sem VRAM do GPUtil caso não exista)
+            model_arch, batch_size, compute_type = _pick_gpu_presets(info)
+        elif force_device == "mps":
+            model_arch, batch_size, compute_type = _pick_mps_presets()
+        else:
+            model_arch, batch_size, compute_type = _pick_cpu_presets()
+        return WhisperRuntimeConfig(force_device, model_arch, batch_size, compute_type)
+
+    # padrão: baseado no device detectado
     if info.device_str == "cuda":
         model_arch, batch_size, compute_type = _pick_gpu_presets(info)
     elif info.device_str == "mps":
@@ -187,24 +202,49 @@ def suggest_whisper_runtime(preferred_index: int = 0) -> WhisperRuntimeConfig:
     else:
         model_arch, batch_size, compute_type = _pick_cpu_presets()
 
-    return WhisperRuntimeConfig(
-        device=info.device_str,
-        model_arch=model_arch,
-        batch_size=batch_size,
-        compute_type=compute_type,
-    )
+    return WhisperRuntimeConfig(info.device_str, model_arch, batch_size, compute_type)
 
 
-# --- Demo rápida em CLI ---
-if __name__ == "__main__":
+def _as_dict(info: DeviceInfo):
+    return {
+        "device": info.device_str,
+        "torch_version": info.torch_version,
+        "cudnn_version": info.cudnn_version,
+        "gpu_count": info.gpu_count,
+        "gpu_name": info.gpu_name,
+        "vram_total_mb": info.vram_total_mb,
+        "vram_used_mb": info.vram_used_mb,
+        "vram_used_pct": None
+        if info.vram_used_pct is None
+        else round(info.vram_used_pct, 2),
+        "memory_at_the_limit": memory_at_the_limit(info),
+    }
+
+
+def main():
+    import json
+
     info = detect_device()
-    print(f"PyTorch: {info.torch_version} | cuDNN: {info.cudnn_version}")
-    print(
-        f"Device:  {info.device_str} | GPUs: {info.gpu_count} | Name: {info.gpu_name}"
-    )
-    print(vram_resume(info))
     rt = suggest_whisper_runtime()
+
+    print("# Device detection")
+    print(json.dumps(_as_dict(info), ensure_ascii=False, indent=2))
+    print("\n# VRAM")
+    print(vram_resume(info))
+    print("\n# Whisper presets")
     print(
-        f"Sugestão Whisper → device={rt.device} | model={rt.model_arch} | "
-        f"batch={rt.batch_size} | compute_type={rt.compute_type}"
+        json.dumps(
+            {
+                "device": rt.device,
+                "model_arch": rt.model_arch,
+                "batch_size": rt.batch_size,
+                "compute_type": rt.compute_type,
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
     )
+
+
+if __name__ == "__main__":
+    main()
