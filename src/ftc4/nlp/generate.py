@@ -16,10 +16,10 @@ class GenOutputs:
 def _load_model():
     logger.info(f"Carregando modelo HF: {settings.hf_model_name}")
     tok = AutoTokenizer.from_pretrained(
-        settings.hf_model_name, use_auth_token=settings.hf_token
+        settings.hf_model_name, token=settings.hf_token
     )
     model = AutoModelForSeq2SeqLM.from_pretrained(
-        settings.hf_model_name, use_auth_token=settings.hf_token
+        settings.hf_model_name, token=settings.hf_token
     )
     gen = pipeline(
         "text2text-generation",
@@ -65,3 +65,9 @@ def generate_outputs(transcript_text: str, n_questions: int = 8) -> GenOutputs:
     quiz_list = _generate_json_list(gen, quiz_prompt)
 
     return GenOutputs(fichamento_md=fichamento_md, quiz_json=quiz_list)
+
+
+if __name__ == "__main__":
+    text = "Este é um conteúdo simples sobre aprendizado de máquina e redes neurais."
+    outs = generate_outputs(text, n_questions=5)
+    print(outs)

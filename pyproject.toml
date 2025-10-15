@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 # Metadados principais (PEP 621)
-name = "fiap_tech_challenge_4_rec"
+name = "ftc4"
 version = "0.1.0"
 description = "Playground Streamlit: Transcrição (WhisperX) + Fichamento Markdown + Quiz (Hugging Face Transformers) com opção de fine-tuning."
 readme = "README.md"
@@ -62,12 +62,14 @@ Issues = "https://github.com/antonio/exemplo-projeto/issues"
 # Entrypoints CLI (PEP 621)
 [project.scripts]
 app-cli = "exemplo_projeto.cli:main"
-check_device = "ftc4.tools.check_torch_device:main"
+check_device = "scripts.verificar_dispositivo_torch:main"
+check_variables = "scripts.inspecao_de_variaveis:main"
 
 [tool.hatch.build.targets.wheel]
 # pacotes editaveis sob src/
 packages = [
-  "src/ftc4"
+  "src/ftc4",
+  "scripts"
 ]
 
 # Dependências de desenvolvimento
@@ -101,10 +103,11 @@ dev = [
     "ipython",
     "jupyterlab",
     "notebook",
-    "rich",           # logging e visualização bonita no terminal
-    "tqdm",           # barras de progresso
-    "debugpy",        # debugging com VSCode
+    "rich", # logging e visualização bonita no terminal
+    "tqdm", # barras de progresso
+    "debugpy", # debugging com VSCode
     "types-requests", # tipagem estática opcional
+    "ipykernel>=6.30.1",
 ]
 
 [tool.uv]

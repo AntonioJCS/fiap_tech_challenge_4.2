@@ -1,7 +1,7 @@
 from __future__ import annotations
 from pathlib import Path
 import yt_dlp
-from .audio_utils import ensure_wav
+from ftc4.io.audio_utils import ensure_wav
 
 YDL_OPTS = {
     "format": "bestaudio/best",

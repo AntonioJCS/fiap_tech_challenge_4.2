@@ -1,4 +1,4 @@
-from src.nlp.generate import generate_outputs
+from ftc4.nlp.generate import generate_outputs
 
 
 def test_generate_minimal():
